@@ -36,11 +36,11 @@ class AmazonMetadataBuilder implements MetadataBuilderInterface
      * @var string[]
      */
     protected $acl = array(
-        'private'            => self::PRIVATE_ACCESS,
-        'public'             => self::PUBLIC_READ,
-        'open'               => self::PUBLIC_READ_WRITE,
-        'auth_read'          => self::AUTHENTICATED_READ,
-        'owner_read'         => self::BUCKET_OWNER_READ,
+        'private' => self::PRIVATE_ACCESS,
+        'public' => self::PUBLIC_READ,
+        'open' => self::PUBLIC_READ_WRITE,
+        'auth_read' => self::AUTHENTICATED_READ,
+        'owner_read' => self::BUCKET_OWNER_READ,
         'owner_full_control' => self::BUCKET_OWNER_FULL_CONTROL,
     );
 
