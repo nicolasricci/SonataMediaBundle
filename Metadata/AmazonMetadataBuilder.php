@@ -53,6 +53,17 @@ class AmazonMetadataBuilder implements MetadataBuilderInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function get(MediaInterface $media, $filename)
+    {
+        return array_replace_recursive(
+            $this->getDefaultMetadata(),
+            $this->getContentType($filename)
+        );
+    }
+
+    /**
      * Get data passed from the config.
      *
      * @return array
@@ -103,20 +114,9 @@ class AmazonMetadataBuilder implements MetadataBuilderInterface
      */
     protected function getContentType($filename)
     {
-        $extension   = pathinfo($filename, PATHINFO_EXTENSION);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
         $contentType = Mimetypes::getInstance()->fromExtension($extension);
 
         return array('contentType' => $contentType);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get(MediaInterface $media, $filename)
-    {
-        return array_replace_recursive(
-            $this->getDefaultMetadata(),
-            $this->getContentType($filename)
-        );
     }
 }
