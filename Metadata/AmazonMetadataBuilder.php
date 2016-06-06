@@ -79,9 +79,9 @@ class AmazonMetadataBuilder implements MetadataBuilderInterface
         //merge storage
         if (isset($this->settings['storage'])) {
             if ($this->settings['storage'] == 'standard') {
-                $output['storage'] = self::STORAGE_STANDARD;
+                $output['storage'] = static::STORAGE_STANDARD;
             } elseif ($this->settings['storage'] == 'reduced') {
-                $output['storage'] = self::STORAGE_REDUCED;
+                $output['storage'] = static::STORAGE_REDUCED;
             }
         }
 

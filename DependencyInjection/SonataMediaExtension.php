@@ -379,7 +379,7 @@ class SonataMediaExtension extends Extension
                 ))
             ;
 
-            if ($config['filesystem']['s3']['sdk_version'] === 3) {
+            if (3 === $config['filesystem']['s3']['sdk_version']) {
                 $container->getDefinition('sonata.media.adapter.service.s3')
                 ->replaceArgument(0, array(
                     'credentials' => array(
