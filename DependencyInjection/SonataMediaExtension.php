@@ -168,9 +168,9 @@ class SonataMediaExtension extends Extension
             $container->getDefinition($connector)
                 ->addMethodCall('setIgnoreErrors', array($config['buzz']['client']['ignore_errors']))
                 ->addMethodCall('setMaxRedirects', array($config['buzz']['client']['max_redirects']))
-                ->addMethodCall('setTimeout',      array($config['buzz']['client']['timeout']))
-                ->addMethodCall('setVerifyPeer',   array($config['buzz']['client']['verify_peer']))
-                ->addMethodCall('setProxy',        array($config['buzz']['client']['proxy']));
+                ->addMethodCall('setTimeout', array($config['buzz']['client']['timeout']))
+                ->addMethodCall('setVerifyPeer', array($config['buzz']['client']['verify_peer']))
+                ->addMethodCall('setProxy', array($config['buzz']['client']['proxy']));
         }
     }
 
