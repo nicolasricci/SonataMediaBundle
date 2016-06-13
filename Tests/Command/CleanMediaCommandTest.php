@@ -19,21 +19,24 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Filesystem\Tests\FilesystemTest as LegacyTestCase;
-use Symfony\Component\Filesystem\Tests\FilesystemTestCase as BaseTestCase;
+use Symfony\Component\Filesystem\Tests\FilesystemTestCase;
 
-// Polyfill for old symfony 2.3 TestCase class
 if (class_exists('Symfony\Component\Filesystem\Tests\FilesystemTestCase')) {
-    class FilesystemTestCase extends BaseTestCase
+    class TestCase extends FilesystemTestCase
     {
     }
 } else {
-    class FilesystemTestCase extends LegacyTestCase
+    class TestCase extends \PHPUnit_Framework_TestCase
     {
     }
 }
 
-class CleanMediaCommandTest extends FilesystemTestCase
+/**
+ * @author Sullivan Senechal <soullivaneuh@gmail.com>
+ *
+ * @requires function Symfony\Component\Filesystem\Tests\FilesystemTestCase::setUpBeforeClass
+ */
+class CleanMediaCommandTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
@@ -87,7 +90,7 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $this->tester = new CommandTester($this->application->find('sonata:media:clean-uploads'));
 
-        $this->pool = $pool =  $this->getMockBuilder('Sonata\MediaBundle\Provider\Pool')->disableOriginalConstructor()->getMock();
+        $this->pool = $pool = $this->getMockBuilder('Sonata\MediaBundle\Provider\Pool')->disableOriginalConstructor()->getMock();
 
         $this->mediaManager = $mediaManager = $this->getMock('Sonata\MediaBundle\Model\MediaManagerInterface');
 
@@ -114,8 +117,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
     {
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $this->pool->expects($this->once())->method('getContexts')->will($this->returnValue(array('foo' => $context)));
@@ -133,8 +136,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $this->pool->expects($this->once())->method('getContexts')->will($this->returnValue(array('foo' => $context)));
@@ -154,8 +157,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $provider = $this->getMockBuilder('Sonata\MediaBundle\Provider\FileProvider')->disableOriginalConstructor()->getMock();
@@ -188,8 +191,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $provider = $this->getMockBuilder('Sonata\MediaBundle\Provider\FileProvider')->disableOriginalConstructor()->getMock();
@@ -209,8 +212,14 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $output = $this->tester->execute(array('command' => $this->command->getName(), '--verbose' => true));
 
-        $this->assertRegExp('@Context: foo\s+\'qwertz.ext\' found\s+\'thumb_1_bar.ext\' found\s+done!@', $this->tester->getDisplay());
-
+        $this->assertOutputFoundInContext(
+            '/Context: foo\s+(.+)\s+done!/ms',
+            array(
+                '\'qwertz.ext\' found',
+                '\'thumb_1_bar.ext\' found',
+            ),
+            $this->tester->getDisplay()
+        );
         $this->assertSame(0, $output);
     }
 
@@ -222,8 +231,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $provider = $this->getMockBuilder('Sonata\MediaBundle\Provider\FileProvider')->disableOriginalConstructor()->getMock();
@@ -241,8 +250,14 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $output = $this->tester->execute(array('command' => $this->command->getName(), '--dry-run' => true));
 
-        $this->assertRegExp('@Context: foo\s+\'qwertz.ext\' is orphanend\s+\'thumb_1_bar.ext\' is orphanend\s+done!@', $this->tester->getDisplay());
-
+        $this->assertOutputFoundInContext(
+            '/Context: foo\s+(.+)\s+done!/ms',
+            array(
+                '\'qwertz.ext\' is orphanend',
+                '\'thumb_1_bar.ext\' is orphanend',
+            ),
+            $this->tester->getDisplay()
+        );
         $this->assertSame(0, $output);
     }
 
@@ -254,8 +269,8 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $context = array(
             'providers' => array(),
-            'formats'   => array(),
-            'download'  => array(),
+            'formats' => array(),
+            'download' => array(),
         );
 
         $provider = $this->getMockBuilder('Sonata\MediaBundle\Provider\FileProvider')->disableOriginalConstructor()->getMock();
@@ -273,8 +288,58 @@ class CleanMediaCommandTest extends FilesystemTestCase
 
         $output = $this->tester->execute(array('command' => $this->command->getName()));
 
-        $this->assertRegExp('@Context: foo\s+\'qwertz.ext\' was successfully removed\s+\'thumb_1_bar.ext\' was successfully removed\s+done!@', $this->tester->getDisplay());
-
+        $this->assertOutputFoundInContext(
+            '/Context: foo\s+(.+)\s+done!/ms',
+            array(
+                '\'qwertz.ext\' was successfully removed',
+                '\'thumb_1_bar.ext\' was successfully removed',
+            ),
+            $this->tester->getDisplay()
+        );
         $this->assertSame(0, $output);
+    }
+
+    /**
+     * Asserts whether all expected texts can be found in the output within a given context.
+     *
+     * @param string $extract  PCRE regex expected to have a single matching group, extracting the content of a context
+     * @param array  $expected Excerpts of text expected to be found in the output
+     * @param string $output   Searched output
+     */
+    private function assertOutputFoundInContext($extractor, $expected, $output)
+    {
+        preg_match_all($extractor, $output, $matches);
+
+        $found = false;
+        foreach ($matches[1] as $match) {
+            if ($this->containsAll($match, $expected)) {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found, sprintf(
+            'Unable to find "%s" in "%s" with extractor "%s"',
+            implode('", "', $expected),
+            $output,
+            $extractor
+        ));
+    }
+
+    /**
+     * Returns whether every needle can be found as a substring of the haystack.
+     *
+     * @param string $haystack
+     * @param array  $needles  Array of (potential) substrings of the haystack
+     */
+    private function containsAll($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (false === strpos($haystack, $needle)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

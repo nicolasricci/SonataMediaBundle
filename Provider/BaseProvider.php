@@ -58,6 +58,11 @@ abstract class BaseProvider implements MediaProviderInterface
     protected $thumbnail;
 
     /**
+     * @var string
+     */
+    protected $name;
+
+    /**
      * @param string             $name
      * @param Filesystem         $filesystem
      * @param CDNInterface       $cdn
@@ -66,17 +71,12 @@ abstract class BaseProvider implements MediaProviderInterface
      */
     public function __construct($name, Filesystem $filesystem, CDNInterface $cdn, GeneratorInterface $pathGenerator, ThumbnailInterface $thumbnail)
     {
-        $this->name          = $name;
-        $this->filesystem    = $filesystem;
-        $this->cdn           = $cdn;
+        $this->name = $name;
+        $this->filesystem = $filesystem;
+        $this->cdn = $cdn;
         $this->pathGenerator = $pathGenerator;
-        $this->thumbnail     = $thumbnail;
+        $this->thumbnail = $thumbnail;
     }
-
-    /**
-     * @param MediaInterface $media
-     */
-    abstract protected function doTransform(MediaInterface $media);
 
     /**
      * {@inheritdoc}
@@ -323,4 +323,9 @@ abstract class BaseProvider implements MediaProviderInterface
     public function validate(ErrorElement $errorElement, MediaInterface $media)
     {
     }
+
+    /**
+     * @param MediaInterface $media
+     */
+    abstract protected function doTransform(MediaInterface $media);
 }
