@@ -11,11 +11,11 @@
 
 namespace Sonata\MediaBundle\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class GalleryHasMediaAdmin extends Admin
+class GalleryItemAdmin extends AbstractAdmin
 {
     /**
      * {@inheritdoc}
@@ -37,11 +37,11 @@ class GalleryHasMediaAdmin extends Admin
         }
 
         $formMapper
-            ->add('media', 'sonata_type_model_list', array('required' => false), array(
+            ->add('media', 'Sonata\AdminBundle\Form\Type\ModelListType', array('required' => false), array(
                 'link_parameters' => $link_parameters,
             ))
             ->add('enabled', null, array('required' => false))
-            ->add('position', 'hidden')
+            ->add('position', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
         ;
     }
 

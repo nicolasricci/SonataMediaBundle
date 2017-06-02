@@ -80,9 +80,9 @@ Finally your settings in your ``sonata_media`` parameters will look like this:
     sonata_media:
         # if you don't use default namespace configuration
         #class:
-        #    media: MyVendor\MediaBundle\Entity\Media
-        #    gallery: MyVendor\MediaBundle\Entity\Gallery
-        #    gallery_has_media: MyVendor\MediaBundle\Entity\GalleryHasMedia
+        #    media:        MyVendor\MediaBundle\Entity\Media
+        #    gallery:      MyVendor\MediaBundle\Entity\Gallery
+        #    gallery_item: MyVendor\MediaBundle\Entity\GalleryItem
         default_context: default
         db_driver: doctrine_orm # or doctrine_mongodb, doctrine_phpcr
         contexts:
@@ -92,7 +92,12 @@ Finally your settings in your ``sonata_media`` parameters will look like this:
                     - sonata.media.provider.youtube
                     - sonata.media.provider.image
                     - sonata.media.provider.file
-
+                # If you omit this section the only format generated will be the `admin` format
+                # which is needed for the backend. This is useful if you use a third party service to create
+                # thumbnails and don't need to create static one using this bundle.
+                #
+                # You can use the helper `media` with `reference` as format to access the media
+                # {% media media, 'reference' %}
                 formats:
                     small: { width: 100 , quality: 70  }
                     big:   { width: 500 , quality: 70  }

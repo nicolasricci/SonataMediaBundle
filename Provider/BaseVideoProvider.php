@@ -50,6 +50,11 @@ abstract class BaseVideoProvider extends BaseProvider
     {
         parent::__construct($name, $filesystem, $cdn, $pathGenerator, $thumbnail);
 
+        // NEXT_MAJOR: remove this check!
+        if (!method_exists($this, 'getReferenceUrl')) {
+            @trigger_error('The method "getReferenceUrl" is required with the next major release.', E_USER_DEPRECATED);
+        }
+
         $this->browser = $browser;
         $this->metadata = $metadata;
     }
@@ -124,7 +129,11 @@ abstract class BaseVideoProvider extends BaseProvider
         $formMapper->add('cdnIsFlushable');
         $formMapper->add('description');
         $formMapper->add('copyright');
-        $formMapper->add('binaryContent', 'text', array('required' => false));
+        $formMapper->add(
+            'binaryContent',
+            'Symfony\Component\Form\Extension\Core\Type\TextType',
+            array('required' => false)
+        );
     }
 
     /**
@@ -132,12 +141,16 @@ abstract class BaseVideoProvider extends BaseProvider
      */
     public function buildCreateForm(FormMapper $formMapper)
     {
-        $formMapper->add('binaryContent', 'text', array(
-            'constraints' => array(
-                new NotBlank(),
-                new NotNull(),
-            ),
-        ));
+        $formMapper->add(
+            'binaryContent',
+            'Symfony\Component\Form\Extension\Core\Type\TextType',
+            array(
+                'constraints' => array(
+                    new NotBlank(),
+                    new NotNull(),
+                ),
+            )
+        );
     }
 
     /**
@@ -145,9 +158,13 @@ abstract class BaseVideoProvider extends BaseProvider
      */
     public function buildMediaType(FormBuilder $formBuilder)
     {
-        $formBuilder->add('binaryContent', 'text', array(
-            'label' => 'widget_label_binary_content',
-        ));
+        $formBuilder->add(
+            'binaryContent',
+            'Symfony\Component\Form\Extension\Core\Type\TextType',
+            array(
+                'label' => 'widget_label_binary_content',
+            )
+        );
     }
 
     /**
@@ -178,6 +195,16 @@ abstract class BaseVideoProvider extends BaseProvider
     public function postRemove(MediaInterface $media)
     {
     }
+
+    // NEXT_MAJOR: Uncomment this method
+    /*
+     * Get provider reference url.
+     *
+     * @param MediaInterface $media
+     *
+     * @return string
+     */
+    // abstract public function getReferenceUrl(MediaInterface $media);
 
     /**
      * @throws \RuntimeException

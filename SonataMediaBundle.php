@@ -14,7 +14,6 @@ namespace Sonata\MediaBundle;
 use Sonata\CoreBundle\Form\FormHelper;
 use Sonata\MediaBundle\DependencyInjection\Compiler\AddProviderCompilerPass;
 use Sonata\MediaBundle\DependencyInjection\Compiler\GlobalVariablesCompilerPass;
-use Sonata\MediaBundle\DependencyInjection\Compiler\SecurityContextCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -27,7 +26,6 @@ class SonataMediaBundle extends Bundle
     {
         $container->addCompilerPass(new AddProviderCompilerPass());
         $container->addCompilerPass(new GlobalVariablesCompilerPass());
-        $container->addCompilerPass(new SecurityContextCompilerPass());
 
         $this->registerFormMapping();
     }
@@ -55,7 +53,7 @@ class SonataMediaBundle extends Bundle
             'sonata_media_api_form_media' => 'Sonata\MediaBundle\Form\Type\ApiMediaType',
             'sonata_media_api_form_doctrine_media' => 'Sonata\MediaBundle\Form\Type\ApiDoctrineMediaType',
             'sonata_media_api_form_gallery' => 'Sonata\MediaBundle\Form\Type\ApiGalleryType',
-            'sonata_media_api_form_gallery_has_media' => 'Sonata\MediaBundle\Form\Type\ApiGalleryHasMediaType',
+            'sonata_media_api_form_gallery_item' => 'Sonata\MediaBundle\Form\Type\ApiGalleryItemType',
         ));
     }
 }

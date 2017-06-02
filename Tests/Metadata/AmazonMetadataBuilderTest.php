@@ -13,19 +13,13 @@ namespace Sonata\MediaBundle\Tests\Metadata;
 
 use Aws\S3\Enum\Storage;
 use Sonata\MediaBundle\Metadata\AmazonMetadataBuilder;
+use Sonata\MediaBundle\Tests\Helpers\PHPUnit_Framework_TestCase;
 
-class AmazonMetadataBuilderTest extends \PHPUnit_Framework_TestCase
+class AmazonMetadataBuilderTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        if (!class_exists('Aws\S3\Enum\CannedAcl')) {
-            $this->markTestSkipped('Missing Aws\\S3\\Enum\\CannedAcl');
-        }
-    }
-
     public function testAmazon()
     {
-        $media = $this->getMock('Sonata\MediaBundle\Model\MediaInterface');
+        $media = $this->createMock('Sonata\MediaBundle\Model\MediaInterface');
         $filename = '/test/folder/testfile.png';
 
         foreach ($this->provider() as $provider) {
@@ -52,7 +46,7 @@ class AmazonMetadataBuilderTest extends \PHPUnit_Framework_TestCase
             array(array('cache_control' => 'max-age=86400'), array('CacheControl' => 'max-age=86400', 'contentType' => 'image/png')),
             array(array('encryption' => 'aes256'), array('encryption' => 'AES256', 'contentType' => 'image/png')),
             array(array('meta' => array('key' => 'value')), array('meta' => array('key' => 'value'), 'contentType' => 'image/png')),
-            array(array('acl' => 'public', 'storage' => 'standard', 'cache_control' => 'max-age=86400', 'encryption' => 'aes256', 'meta' => array('key' => 'value')), array('ACL' => AmazonMetadataBuilder::PUBLIC_READ, 'storage' => AmazonMetadataBuilder::STORAGE_STANDARD, 'meta' => array('key' => 'value'), 'CacheControl' => 'max-age=86400', 'encryption' => 'AES256', 'contentType' => 'image/png')),
+            array(array('acl' => 'public', 'storage' => 'standard', 'cache_control' => 'max-age=86400', 'encryption' => 'aes256', 'meta' => array('key' => 'value')), array('ACL' => AmazonMetadataBuilder::PUBLIC_READ, 'storage' => Storage::STANDARD, 'meta' => array('key' => 'value'), 'CacheControl' => 'max-age=86400', 'encryption' => 'AES256', 'contentType' => 'image/png')),
         );
     }
 }

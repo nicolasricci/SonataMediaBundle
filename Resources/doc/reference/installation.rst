@@ -6,15 +6,14 @@ Base bundles
 
 This bundle is mainly dependant of:
 
-* Classification: https://sonata-project.org/bundles/classification
 * Core: https://sonata-project.org/bundles/core
-* Intl: https://sonata-project.org/bundles/intl
 
 This bundle has optional dependancies of:
 
  * Admin: https://sonata-project.org/bundles/admin
  * DoctrineOrm: https://sonata-project.org/bundles/doctrine-orm-admin
  * MongoAdmin: https://sonata-project.org/bundles/mongo-admin
+ * Classification: https://sonata-project.org/bundles/classification
 
 So be sure you have installed those bundles before starting
 
@@ -25,7 +24,8 @@ Retrieve the bundle with composer:
 
 .. code-block:: bash
 
-    $ php composer.phar require sonata-project/media-bundle
+    $ composer require sonata-project/media-bundle
+    $ composer require sonata-project/classification-bundle # (optional: if you need media classification)
 
 Register these bundles in your AppKernel:
 
@@ -40,7 +40,6 @@ Register these bundles in your AppKernel:
           // ...
           new Sonata\MediaBundle\SonataMediaBundle(),
           new Sonata\EasyExtendsBundle\SonataEasyExtendsBundle(),
-          new Sonata\IntlBundle\SonataIntlBundle(),
 
           // You need to add this dependency to make media functional
           new JMS\SerializerBundle\JMSSerializerBundle(),
@@ -108,9 +107,9 @@ Doctrine PHPCR:
         sonata_media:
             # if you don't use default namespace configuration
             #class:
-            #    media: MyVendor\MediaBundle\Entity\Media
-            #    gallery: MyVendor\MediaBundle\Entity\Gallery
-            #    gallery_has_media: MyVendor\MediaBundle\Entity\GalleryHasMedia
+            #    media:        MyVendor\MediaBundle\Entity\Media
+            #    gallery:      MyVendor\MediaBundle\Entity\Gallery
+            #    gallery_item: MyVendor\MediaBundle\Entity\GalleryItem
             db_driver: doctrine_orm # or doctrine_mongodb, doctrine_phpcr it is mandatory to choose one here
             default_context: default # you need to set a context
             contexts:
